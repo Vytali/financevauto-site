@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nos véhicules — Finance Vauto</title>
+<meta name="description" content="Inventaire Finance Vauto : véhicules à vendre et à louer, prix affichés.">
+<meta name="theme-color" content="#0B0E0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="wrap header-in">
+    <a class="logo" href="index.html"><img src="logo-fr-light.png" alt="Finance Vauto — Roulez l'auto de votre choix, en tout temps"></a>
+    <nav class="main">
+      <a href="index.html">Accueil</a>
+      <a href="vehicules.html" class="actif">Véhicules</a>
+      <a href="vehicules.html">Acheter</a>
+      <a href="vehicules.html">Louer</a>
+    </nav>
+    <a class="btn tel" href="tel:+14188007579">📞 +1 418-800-7579</a>
+  </div>
+</header>
+
+<section style="padding-top:38px">
+  <div class="wrap">
+    <div class="filtres">
+      <div>
+        <label for="f-marque">Marque</label>
+        <select id="f-marque"><option value="">Toutes</option></select>
+      </div>
+      <div>
+        <label for="f-tarif">Tarif journalier max <span class="range-val" id="f-tarif-val">500 $ / jour</span></label>
+        <input type="range" id="f-tarif" min="50" max="500" step="10" value="500">
+      </div>
+    </div>
+    <div class="resultats-ligne"><span id="nb-resultats">Chargement…</span><button id="btn-reset">↺ Réinitialiser</button></div>
+    <div class="grille" id="grille"><div class="message">Chargement de l'inventaire…</div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <img src="logo-fr-light.png" alt="Finance Vauto">
+      <p>Roulez l'auto de votre choix, en tout temps.</p>
+    </div>
+    <div>
+      <p><b>Finance Vauto</b><br>600, 1re Avenue<br>Québec (QC) G1L 3K1</p>
+    </div>
+    <div>
+      <p><b>Contact</b><br>Tél. : <a href="tel:+14188007579">+1 418-800-7579</a><br><a href="vehicules.html">Voir l'inventaire</a></p>
+    </div>
+  </div>
+</footer>
+
+<a class="bouton-flottant" href="tel:+14188007579" aria-label="Appeler Finance Vauto">📞</a>
+
+<script src="app.js"></script>
+<script>
+let tous = [];
+const grille = document.getElementById('grille');
+const selMarque = document.getElementById('f-marque');
+const rangeTarif = document.getElementById('f-tarif');
+const rangeVal = document.getElementById('f-tarif-val');
+const nbRes = document.getElementById('nb-resultats');
+
+function appliquer() {
+  const m = selMarque.value;
+  const max = Number(rangeTarif.value);
+  rangeVal.textContent = max + " $ / jour";
+  const liste = tous.filter(v =>
+    (!m || v.marque === m) &&
+    (!v.daily_rate || Number(v.daily_rate) <= max)
+  );
+  nbRes.textContent = liste.length + (liste.length > 1 ? " résultats" : " résultat");
+  grille.innerHTML = liste.map(carteVehicule).join('') ||
+    '<div class="message">Aucun véhicule ne correspond à ces critères.</div>';
+}
+selMarque.addEventListener('change', appliquer);
+rangeTarif.addEventListener('input', appliquer);
+document.getElementById('btn-reset').addEventListener('click', () => {
+  selMarque.value = ""; rangeTarif.value = 500; appliquer();
+});
+
+chargerVehicules().then(items => {
+  tous = items;
+  [...new Set(items.map(v => v.marque).filter(Boolean))].sort()
+    .forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; selMarque.appendChild(o); });
+  appliquer();
+}).catch(() => messageErreur(grille));
+</script>
+</body>
+</html>
