@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finance Vauto — Tout l'automobile. Une seule plateforme.</title>
+<meta name="description" content="Louez, financez et achetez votre prochain véhicule avec Finance Vauto.">
+<meta name="theme-color" content="#0B0E0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="wrap header-in">
+    <a class="logo" href="index.html"><img src="logo-fr-light.png" alt="Finance Vauto — Roulez l'auto de votre choix, en tout temps"></a>
+    <nav class="main">
+      <a href="index.html" class="actif">Accueil</a>
+      <a href="vehicules.html">Véhicules</a>
+      <a href="vehicules.html">Acheter</a>
+      <a href="vehicules.html">Louer</a>
+    </nav>
+    <a class="btn tel" href="tel:+14188007579">📞 +1 418-800-7579</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>Tout l'automobile.<br><span class="vert">Une seule plateforme.</span></h1>
+    <p class="sous">Louez, financez et achetez votre prochain véhicule avec Finance Vauto. Roulez l'auto de votre choix, en tout temps.</p>
+    <div class="cta">
+      <a class="btn" href="vehicules.html">Voir les véhicules</a>
+      <a class="btn ghost" href="tel:+14188007579">Parler à un conseiller</a>
+    </div>
+    <div class="stats">
+      <div><b id="stat-nb">—</b><span>Véhicules en inventaire</span></div>
+      <div><b>1re, 2e, 3e</b><span>Chance au crédit</span></div>
+      <div><b>Québec</b><span>600, 1re Avenue</span></div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="entete-section"><h2>Véhicules en vedette</h2><a href="vehicules.html">Tout l'inventaire →</a></div>
+    <div class="grille" id="vedette"><div class="message">Chargement de l'inventaire…</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="entete-section"><h2>Comment ça marche</h2></div>
+    <div class="etapes">
+      <div class="etape"><div class="num">01</div><h3>Choisissez</h3><p>Parcourez l'inventaire en ligne : prix de vente et tarifs de location affichés, sans détour.</p></div>
+      <div class="etape"><div class="num">02</div><h3>Financez ou réservez</h3><p>Financement disponible — 1re, 2e et 3e chance au crédit, et financement maison. La réservation, le paiement et la vérification se poursuivent avec notre équipe.</p></div>
+      <div class="etape"><div class="num">03</div><h3>Roulez</h3><p>Prenez la route avec l'auto de votre choix, achetée ou louée, en toute simplicité.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <img src="logo-fr-light.png" alt="Finance Vauto">
+      <p>Roulez l'auto de votre choix, en tout temps.</p>
+    </div>
+    <div>
+      <p><b>Finance Vauto</b><br>600, 1re Avenue<br>Québec (QC) G1L 3K1</p>
+    </div>
+    <div>
+      <p><b>Contact</b><br>Tél. : <a href="tel:+14188007579">+1 418-800-7579</a><br><a href="vehicules.html">Voir l'inventaire</a></p>
+    </div>
+  </div>
+</footer>
+
+<a class="bouton-flottant" href="tel:+14188007579" aria-label="Appeler Finance Vauto">📞</a>
+
+<script src="app.js"></script>
+<script>
+chargerVehicules().then(items => {
+  document.getElementById('stat-nb').textContent = items.length;
+  document.getElementById('vedette').innerHTML =
+    items.slice(0, 3).map(carteVehicule).join('') ||
+    '<div class="message">Aucun véhicule publié pour le moment.</div>';
+}).catch(() => messageErreur(document.getElementById('vedette')));
+</script>
+</body>
+</html>
