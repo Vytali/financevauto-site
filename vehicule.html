@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Véhicule — Finance Vauto</title>
+<meta name="description" content="Détail du véhicule — Finance Vauto.">
+<meta name="theme-color" content="#0B0E0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="wrap header-in">
+    <a class="logo" href="index.html"><img src="logo-fr-light.png" alt="Finance Vauto — Roulez l'auto de votre choix, en tout temps"></a>
+    <nav class="main">
+      <a href="index.html">Accueil</a>
+      <a href="vehicules.html" class="actif">Véhicules</a>
+      <a href="vehicules.html">Acheter</a>
+      <a href="vehicules.html">Louer</a>
+    </nav>
+    <a class="btn tel" href="tel:+14188007579">📞 +1 418-800-7579</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <a class="retour" href="vehicules.html">← Retour à l'inventaire</a>
+  <div id="zone"><div class="message">Chargement du véhicule…</div></div>
+</div>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <img src="logo-fr-light.png" alt="Finance Vauto">
+      <p>Roulez l'auto de votre choix, en tout temps.</p>
+    </div>
+    <div>
+      <p><b>Finance Vauto</b><br>600, 1re Avenue<br>Québec (QC) G1L 3K1</p>
+    </div>
+    <div>
+      <p><b>Contact</b><br>Tél. : <a href="tel:+14188007579">+1 418-800-7579</a><br><a href="vehicules.html">Voir l'inventaire</a></p>
+    </div>
+  </div>
+</footer>
+
+<a class="bouton-flottant" href="tel:+14188007579" aria-label="Appeler Finance Vauto">📞</a>
+
+<script src="app.js"></script>
+<script>
+const zone = document.getElementById('zone');
+const slug = new URLSearchParams(location.search).get('slug');
+
+chargerVehicules().then(items => {
+  const v = items.find(x => x.slug === slug) || items[0];
+  if (!v) { zone.innerHTML = '<div class="message">Véhicule introuvable.</div>'; return; }
+  document.title = `${v.marque} ${v.modele} ${v.annee} — Finance Vauto`;
+  const pv = prixVente(v), pj = prixJour(v);
+  const photos = v.photos || [];
+  zone.innerHTML = `<div class="detail">
+    <div class="galerie">
+      <div class="principale"><img id="photo-principale" src="${photos[0] || ''}" alt="${v.marque} ${v.modele} ${v.annee}"></div>
+      <div class="vignettes">${photos.map((p, i) => `<img src="${p}" data-i="${i}" class="${i === 0 ? 'sel' : ''}" alt="">`).join('')}</div>
+    </div>
+    <div>
+      <h1>${v.marque} ${v.modele} <span class="vert">${v.annee}</span></h1>
+      <p style="color:var(--muted);margin-top:8px">📍 ${v.public_location_label || v.ville || ''}</p>
+      <div class="bloc-prix">
+        ${pv ? `<div class="pv"><small>Prix de vente</small>${pv}</div>` : ''}
+        ${pj ? `<div class="pj">Location : <b>${pj} / jour</b></div>` : ''}
+        <div class="cta">
+          ${pv ? `<a class="btn" href="tel:${TEL}">Acheter ce véhicule</a>` : ''}
+          ${pj ? `<a class="btn ${pv ? 'ghost' : ''}" href="tel:${TEL}">Réserver (location)</a>` : ''}
+        </div>
+        <p class="note">Financement disponible — 1re, 2e et 3e chance au crédit. La réservation, le paiement et la vérification se poursuivent avec notre équipe.</p>
+      </div>
+      <div class="specs-grid">
+        ${v.places ? `<div class="spec"><small>Places</small><b>${v.places}</b></div>` : ''}
+        ${v.transmission ? `<div class="spec"><small>Transmission</small><b>${v.transmission}</b></div>` : ''}
+        ${v.carburant ? `<div class="spec"><small>Carburant</small><b>${v.carburant}</b></div>` : ''}
+        ${v.ville ? `<div class="spec"><small>Ville</small><b>${v.ville}</b></div>` : ''}
+      </div>
+      ${v.description ? `<div class="description">${v.description.replace(/</g, '&lt;')}</div>` : ''}
+    </div>
+  </div>`;
+  zone.querySelectorAll('.vignettes img').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('photo-principale').src = photos[Number(img.dataset.i)];
+      zone.querySelectorAll('.vignettes img').forEach(x => x.classList.remove('sel'));
+      img.classList.add('sel');
+    });
+  });
+}).catch(() => messageErreur(zone));
+</script>
+</body>
+</html>
